@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="githubViewer">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Github Viewer</title>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!--import Angular-->
+    <script data-require="angular.js@1.3.0" data-semver="1.3.0" src="https://code.angularjs.org/1.3.0/angular.js"></script>
+    <script src="js/script.js"></script>
+    <!---import Bootstrap---->
+    <link href = "css/bootstrap.min.css" rel = "stylesheet">
+    <link href = "css/index.css" rel = "stylesheet">
+
+
+</head>
+<body>
+
+
+<div class = "appContents" ng-controller="MainController">
+    <h1>{{message}}</h1>
+
+    <div>{{error}}</div>
+
+    {{username}}
+    <!--Using "ng-model" directive to push info from view to Model-->
+
+    <!--Using "ng-submit" directive can tell user to fill out textbox-->
+    <form name="searchUser" ng-submit="search(username)">
+        <input type="search" required placeholder="Username to Find" ng-model="username" />
+        <input type="submit" value="Search">
+    </form>
+
+
+    <!--
+    ng-show hides info until we get user info
+
+    If 'user' expression is true then it will show this
+    Otherwise it will hide this markup
+    -->
+    <div ng-show="user">
+
+        <h2>Name: {{user.name}}</h2>
+
+        <div class = "gitHubImg">
+            <img ng-src="{{user.avatar_url}}" title="{{user.name}}">
+        </div>
+
+
+        <!--
+      ng-model works just as well for a select element as it does for an input.
+      As a user selects someething, this directive will send it to the model
+      -->
+        Sort by:
+        <select ng-model="repoSortOrder">
+            <option value="+name">Name</option>
+            <option value="-stargazers_count">Stars</option>
+            <option value="+language">Language</option>
+
+        </select>
+    </div>
+
+
+
+
+    <!--Display Github Repository information in a table-->
+
+    <!--
+    Hide this if we don't have a user
+    -->
+    <table ng-hide = "!user">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Stars</th>
+            <th>Language</th>
+        </tr>
+        </thead>
+
+        <!--
+        We will need a table row for each repository. How does one do that w/ Angular?
+
+        "ng-repeat" directive is a lot like a for each loop
+        -->
+        <tbody>
+        <tr ng-repeat="repo in repos | orderBy: repoSortOrder">
+
+            <td>{{repo.name}}</td>
+
+            <!--
+            In addition to directives, angular also has Filters.
+            A Filter is something you invoke and pipe data through
+            by using the pipe symbol and then the name of the filter
+
+            "number" is a filter that can take data (count of stargazers and format it into a number)
+            number is one of many filters that angular has
+            -->
+            <td>{{repo.stargazers_count | number}}</td>
+            <td>{{repo.language}}</td>
+
+        </tr>
+
+        </tbody>
+    </table>
+</body>
+</html>
